@@ -125,9 +125,6 @@ circleBtn.MouseButton1Click:Connect(function()
 	minimized = false
 	main.Visible = true
 	circleBtn.Visible = false
-end)
-
--- 🧱 Zawartość zakładek
 local labelPlayer = Instance.new("TextLabel", tabFrames["Player"])
 labelPlayer.Text = "KillAura & Player Tools"
 labelPlayer.Size = UDim2.new(1, -20, 0, 30)
@@ -157,3 +154,39 @@ labelSettings.BackgroundTransparency = 1
 labelSettings.Font = Enum.Font.SourceSansBold
 labelSettings.TextSize = 20
 labelSettings.TextXAlignment = Enum.TextXAlignment.Left
+
+task.spawn(function()
+	while true do
+		if killAuraEnabled then
+			pcall(function()
+				local char = player.Character
+				if not (char and char:FindFirstChild("HumanoidRootPart")) then return end
+
+				local cooldown = tonumber(cooldownBox.Text) or 0.3
+				local mobLimit = tonumber(mobLimitBox.Text) or 3
+				local multiplier = tonumber(multiplierBox.Text) or 2
+
+				local hitCount = 0
+				for _, mob in pairs(workspace:GetDescendants()) do
+					if mob:IsA("Model") and mob:FindFirstChild("Humanoid") and mob:FindFirstChild("HumanoidRootPart") then
+						if mob.Humanoid.Health > 0 then
+							local dist = (mob.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
+							if dist < 20 then
+								char.HumanoidRootPart.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+								for i = 1, multiplier do
+									game:GetService("VirtualUser"):ClickButton1(Vector2.new())
+								end
+								hitCount += 1
+								if hitCount >= mobLimit then break end
+								task.wait(0.1)
+							end
+						end
+					end
+				end
+				task.wait(cooldown)
+			end)
+		end
+		task.wait(0.05)
+	end
+end)
+
