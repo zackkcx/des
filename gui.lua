@@ -243,3 +243,53 @@ labelSettings.BackgroundTransparency = 1
 labelSettings.Font = Enum.Font.SourceSansBold
 labelSettings.TextSize = 20
 labelSettings.TextXAlignment = Enum.TextXAlignment.Left
+
+
+-- 📦 KillAura z GUI w zakładce "Player"
+-- Upewnij się, że GUI już istnieje i ma tabFrames["Player"]
+
+local toggle = Instance.new("TextButton", tabFrames["Player"])
+toggle.Size = UDim2.new(0, 200, 0, 30)
+toggle.Position = UDim2.new(0, 10, 0, 220)
+toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+toggle.TextColor3 = Color3.new(1,1,1)
+toggle.Font = Enum.Font.SourceSansBold
+toggle.TextSize = 16
+toggle.Text = "🔴 KillAura: OFF"
+toggle.BorderSizePixel = 0
+
+local auraActive = false
+toggle.MouseButton1Click:Connect(function()
+    auraActive = not auraActive
+    toggle.Text = auraActive and "🟢 KillAura: ON" or "🔴 KillAura: OFF"
+end)
+
+task.spawn(function()
+    while true do
+        if auraActive then
+            pcall(function()
+                local char = player.Character
+                if not (char and char:FindFirstChild("HumanoidRootPart")) then return end
+
+                for _, mob in pairs(workspace:GetDescendants()) do
+                    if mob:IsA("Model") and mob:FindFirstChildOfClass("Humanoid") and mob:FindFirstChild("HumanoidRootPart") then
+                        local hum = mob:FindFirstChildOfClass("Humanoid")
+                        if hum and hum.Health > 0 then
+                            local dist = (mob.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
+                            if dist <= 30 then
+                                char.HumanoidRootPart.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+                                for i = 1, 2 do
+                                    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0,true,game,0)
+                                    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0,false,game,0)
+                                    task.wait(0.05)
+                                end
+                                task.wait(0.2)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+        task.wait(0.1)
+    end
+end)
