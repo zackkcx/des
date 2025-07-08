@@ -1,3 +1,4 @@
+-- 📦 Tel-Ray GUI z przeciąganiem, minimalizacją i KillAurą (pełna wersja)
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
 
@@ -90,7 +91,7 @@ for i, name in ipairs(tabs) do
 	end)
 end
 
--- 🟥 Minimalizacja (prawy górny róg)
+-- 🟥 Minimalizacja
 local minBtn = Instance.new("TextButton", main)
 minBtn.Size = UDim2.new(0, 30, 0, 30)
 minBtn.Position = UDim2.new(1, -30, 0, 0)
@@ -114,7 +115,6 @@ circleBtn.TextSize = 28
 circleBtn.Visible = false
 circleBtn.BorderSizePixel = 0
 
--- 🔁 Przełączanie widoczności
 local minimized = false
 minBtn.MouseButton1Click:Connect(function()
 	minimized = true
@@ -125,6 +125,9 @@ circleBtn.MouseButton1Click:Connect(function()
 	minimized = false
 	main.Visible = true
 	circleBtn.Visible = false
+end)
+
+-- 🧱 Player Tab with KillAura
 local labelPlayer = Instance.new("TextLabel", tabFrames["Player"])
 labelPlayer.Text = "KillAura & Player Tools"
 labelPlayer.Size = UDim2.new(1, -20, 0, 30)
@@ -135,25 +138,55 @@ labelPlayer.Font = Enum.Font.SourceSansBold
 labelPlayer.TextSize = 20
 labelPlayer.TextXAlignment = Enum.TextXAlignment.Left
 
-local labelDungeon = Instance.new("TextLabel", tabFrames["Tel-Ray"])
-labelDungeon.Text = "Tel-Ray Dungeon Controls"
-labelDungeon.Size = UDim2.new(1, -20, 0, 30)
-labelDungeon.Position = UDim2.new(0, 10, 0, 10)
-labelDungeon.TextColor3 = Color3.new(1,1,1)
-labelDungeon.BackgroundTransparency = 1
-labelDungeon.Font = Enum.Font.SourceSansBold
-labelDungeon.TextSize = 20
-labelDungeon.TextXAlignment = Enum.TextXAlignment.Left
+local killAuraEnabled = false
 
-local labelSettings = Instance.new("TextLabel", tabFrames["Settings"])
-labelSettings.Text = "Settings / Info"
-labelSettings.Size = UDim2.new(1, -20, 0, 30)
-labelSettings.Position = UDim2.new(0, 10, 0, 10)
-labelSettings.TextColor3 = Color3.new(1,1,1)
-labelSettings.BackgroundTransparency = 1
-labelSettings.Font = Enum.Font.SourceSansBold
-labelSettings.TextSize = 20
-labelSettings.TextXAlignment = Enum.TextXAlignment.Left
+local auraToggle = Instance.new("TextButton", tabFrames["Player"])
+auraToggle.Size = UDim2.new(0, 200, 0, 30)
+auraToggle.Position = UDim2.new(0, 10, 0, 60)
+auraToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+auraToggle.TextColor3 = Color3.new(1,1,1)
+auraToggle.Font = Enum.Font.SourceSans
+auraToggle.TextSize = 16
+auraToggle.Text = "⛔ KillAura"
+auraToggle.BorderSizePixel = 0
+
+auraToggle.MouseButton1Click:Connect(function()
+    killAuraEnabled = not killAuraEnabled
+    auraToggle.Text = killAuraEnabled and "✅ KillAura" or "⛔ KillAura"
+end)
+
+local cooldownBox = Instance.new("TextBox", tabFrames["Player"])
+cooldownBox.Size = UDim2.new(0, 200, 0, 25)
+cooldownBox.Position = UDim2.new(0, 10, 0, 100)
+cooldownBox.PlaceholderText = "Attack Cooldown (sec)"
+cooldownBox.Text = "0.3"
+cooldownBox.TextColor3 = Color3.new(1,1,1)
+cooldownBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+cooldownBox.BorderSizePixel = 0
+cooldownBox.Font = Enum.Font.SourceSans
+cooldownBox.TextSize = 14
+
+local mobLimitBox = Instance.new("TextBox", tabFrames["Player"])
+mobLimitBox.Size = UDim2.new(0, 200, 0, 25)
+mobLimitBox.Position = UDim2.new(0, 10, 0, 135)
+mobLimitBox.PlaceholderText = "Max Mob Limit"
+mobLimitBox.Text = "3"
+mobLimitBox.TextColor3 = Color3.new(1,1,1)
+mobLimitBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+mobLimitBox.BorderSizePixel = 0
+mobLimitBox.Font = Enum.Font.SourceSans
+mobLimitBox.TextSize = 14
+
+local multiplierBox = Instance.new("TextBox", tabFrames["Player"])
+multiplierBox.Size = UDim2.new(0, 200, 0, 25)
+multiplierBox.Position = UDim2.new(0, 10, 0, 170)
+multiplierBox.PlaceholderText = "Attack Multiplier"
+multiplierBox.Text = "2"
+multiplierBox.TextColor3 = Color3.new(1,1,1)
+multiplierBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+multiplierBox.BorderSizePixel = 0
+multiplierBox.Font = Enum.Font.SourceSans
+multiplierBox.TextSize = 14
 
 task.spawn(function()
 	while true do
@@ -190,3 +223,23 @@ task.spawn(function()
 	end
 end)
 
+-- 📌 Zakładki pozostałe
+local labelDungeon = Instance.new("TextLabel", tabFrames["Tel-Ray"])
+labelDungeon.Text = "Tel-Ray Dungeon Controls"
+labelDungeon.Size = UDim2.new(1, -20, 0, 30)
+labelDungeon.Position = UDim2.new(0, 10, 0, 10)
+labelDungeon.TextColor3 = Color3.new(1,1,1)
+labelDungeon.BackgroundTransparency = 1
+labelDungeon.Font = Enum.Font.SourceSansBold
+labelDungeon.TextSize = 20
+labelDungeon.TextXAlignment = Enum.TextXAlignment.Left
+
+local labelSettings = Instance.new("TextLabel", tabFrames["Settings"])
+labelSettings.Text = "Settings / Info"
+labelSettings.Size = UDim2.new(1, -20, 0, 30)
+labelSettings.Position = UDim2.new(0, 10, 0, 10)
+labelSettings.TextColor3 = Color3.new(1,1,1)
+labelSettings.BackgroundTransparency = 1
+labelSettings.Font = Enum.Font.SourceSansBold
+labelSettings.TextSize = 20
+labelSettings.TextXAlignment = Enum.TextXAlignment.Left
